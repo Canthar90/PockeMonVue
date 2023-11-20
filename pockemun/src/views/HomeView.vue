@@ -1,6 +1,6 @@
 <template>
   <main>
-    <div />
+    <div class="p-8 bg-slate-500 rounded-xl"></div>
   </main>
 </template>
 
