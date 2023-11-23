@@ -27,7 +27,12 @@
         </div>
         <div class="flex justify-center justify-items-center mt-4">
           <div class="grid grid-cols-8 p-2 justify-items-center gap-8">
-            <div v-for="pokemon in allPokemons" :key="pokemon.name" role="button">
+            <div
+              v-for="pokemon in allPokemons"
+              :key="pokemon.name"
+              role="button"
+              @click="searchForPokemon"
+            >
               <div class="p-2 bg-red-500 rounded-xl">
                 <h1 class="flex flex-auto text-md text-orange-100 p-2">{{ pokemon.name }}</h1>
               </div>
@@ -43,6 +48,7 @@
 import axios from 'axios'
 import { onBeforeMount, ref } from 'vue'
 
+const searchForPokemon = () => {}
 interface PokemonData {
   name: string
   url: string
