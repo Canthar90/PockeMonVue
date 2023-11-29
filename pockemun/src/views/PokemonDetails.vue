@@ -16,15 +16,15 @@
           {{ choosenPokemon.name }}
         </div>
         <div class="text-3xl flex justify-start pt-4 text-slate-950 ml-10">Moves:</div>
-        <div class="grid grid-cols-6 mx-10 gap-2 text-xl pt-2">
+        <div class="grid grid-cols-3 gap-4 text-3xl pl-8">
           <div
-            v-for="move in choosenPokemon.moves"
-            :key="move.move.name"
-            class="bg-red-500 rounded-2xl flex justify-center text-slate-950"
+            v-for="move in choosenPokemon.abilities"
+            :key="move.ability.name"
+            class="bg-red-500 rounded-2xl flex justify-center text-slate-950 p-2"
             role="button"
-            @click="goToPokemonSkill(move.move.name)"
+            @click="goToPokemonSkill(move.ability.name)"
           >
-            {{ move.move.name }}
+            {{ move.ability.name }}
           </div>
         </div>
       </div>
@@ -52,6 +52,7 @@ type Move = {
 }
 
 type PokemonDetails = {
+  abilities: Array<{ ability: { name: string } }>
   name: string
   moves: Array<Move>
   sprites: {
