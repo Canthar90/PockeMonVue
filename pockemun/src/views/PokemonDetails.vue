@@ -3,14 +3,23 @@
     <div class="grid grid-cols-10 mt-10 mb-10">
       <div
         v-if="fetched && choosenPokemon"
-        class="p-10 col-span-8 col-start-2 bg-red-300 rounded-3xl"
+        class="p-10 col-span-4 col-start-4 bg-red-300 rounded-3xl"
       >
         <div class="flex justify-center justify-items-center">
           <img
             :src="choosenPokemon.sprites.other['official-artwork'].front_default"
             alt="Pokemon image"
             class="bg-slate-200 rounded-full"
+            role="button"
+            @click="statisticPopupActions"
           />
+        </div>
+        <div v-if="statisticPopup">
+          <type-evolutions-segment
+            :types="choosenPokemon.types"
+            :stats="choosenPokemon.stats"
+            :weigth="choosenPokemon.weight"
+          ></type-evolutions-segment>
         </div>
         <div class="text-6xl flex justify-center pt-2 text-slate-950">
           {{ choosenPokemon.name }}
@@ -52,12 +61,6 @@
         </svg>
         <span class="sr-only">Loading...</span>
       </div>
-      <!-- <div
-        v-else
-        class="p-10 col-span-8 col-start-2 bg-red-300 rounded-3xl text-slate-950 text-5xl"
-      >
-        Loading...
-      </div> -->
     </div>
   </div>
 </template>
@@ -65,6 +68,7 @@
 <script setup lang="ts">
 import axios from 'axios'
 import { onBeforeMount, ref } from 'vue'
+import TypeEvolutionsSegment from '@/components/PokemonDetais/TypeEvolutionsSegment.vue'
 
 type Move = {
   move: {
@@ -85,7 +89,12 @@ type PokemonDetails = {
       }
     }
   }
+  types: Array<{ type: { name: string } }>
+  stats: Array<{ base_stat: number; stat: { name: string } }>
+  weight: string
 }
+
+const statisticPopup = ref(false)
 
 const prop = defineProps({
   pokemonName: {
@@ -98,7 +107,9 @@ const choosenPokemon = ref<PokemonDetails | null>(null)
 
 const fetched = ref(false)
 
-console.log(prop.pokemonName)
+const statisticPopupActions = () => {
+  statisticPopup.value = !statisticPopup.value
+}
 
 onBeforeMount(async () => {
   const url = `https://pokeapi.co/api/v2/pokemon/${prop.pokemonName}`
