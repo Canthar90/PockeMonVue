@@ -43,13 +43,6 @@
 import axios from 'axios'
 import { onBeforeMount, ref } from 'vue'
 
-const prop = defineProps({
-  pokemonName: {
-    type: String,
-    required: true
-  }
-})
-
 type Move = {
   move: {
     name: string
@@ -69,6 +62,13 @@ type PokemonDetails = {
     }
   }
 }
+
+const prop = defineProps({
+  pokemonName: {
+    type: String,
+    required: true
+  }
+})
 
 const choosenPokemon = ref<PokemonDetails | null>(null)
 

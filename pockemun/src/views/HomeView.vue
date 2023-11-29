@@ -31,7 +31,7 @@
               v-for="pokemon in allPokemons"
               :key="pokemon.name"
               role="button"
-              @click="GoToPokemonDetails(pokemon.name)"
+              @click="goToPokemonDetails(pokemon.name)"
             >
               <div class="p-2 bg-red-500 rounded-xl">
                 <h1 class="flex flex-auto text-md text-orange-100 p-2">{{ pokemon.name }}</h1>
@@ -50,14 +50,15 @@ import { onBeforeMount, ref } from 'vue'
 
 import { useRouter } from 'vue-router'
 
-const router = useRouter()
-
-const GoToPokemonDetails = (pokemonName: string) => {
-  router.push({ name: 'pokemonDetails', params: { pokemonName: pokemonName } })
-}
 interface PokemonData {
   name: string
   url: string
+}
+
+const router = useRouter()
+
+const goToPokemonDetails = (pokemonName: string) => {
+  router.push({ name: 'pokemonDetails', params: { pokemonName: pokemonName } })
 }
 
 const allPokemons = ref<PokemonData[]>([])
