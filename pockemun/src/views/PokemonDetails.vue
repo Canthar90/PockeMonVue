@@ -31,9 +31,15 @@
             :key="move.ability.name"
             class="bg-red-500 rounded-2xl flex justify-center text-slate-950 p-2"
             role="button"
-            @click="goToPokemonSkill(move.ability.name)"
+            @click="goToPokemonSkill(move.ability.name, move.ability.url)"
           >
             {{ move.ability.name }}
+          </div>
+          <div v-if="abilityDescriptionFlag" class="col-span-3 p-2">
+            <atack-information
+              :attack-name="abilityCurrentlyDisplayed.name"
+              :attack-url="abilityCurrentlyDisplayed.url"
+            ></atack-information>
           </div>
         </div>
       </div>
@@ -69,6 +75,7 @@
 import axios from 'axios'
 import { onBeforeMount, ref } from 'vue'
 import TypeEvolutionsSegment from '@/components/PokemonDetais/TypeEvolutionsSegment.vue'
+import AtackInformation from '@/components/PokemonDetais/AtackInformation.vue'
 
 type Move = {
   move: {
@@ -79,7 +86,7 @@ type Move = {
 }
 
 type PokemonDetails = {
-  abilities: Array<{ ability: { name: string } }>
+  abilities: Array<{ ability: { name: string; url: string } }>
   name: string
   moves: Array<Move>
   sprites: {
@@ -107,6 +114,10 @@ const choosenPokemon = ref<PokemonDetails | null>(null)
 
 const fetched = ref(false)
 
+const abilityDescriptionFlag = ref(false)
+
+const abilityCurrentlyDisplayed = ref<{ name: string; url: string }>({ name: '', url: '' })
+
 const statisticPopupActions = () => {
   statisticPopup.value = !statisticPopup.value
 }
@@ -119,7 +130,14 @@ onBeforeMount(async () => {
   fetched.value = true
 })
 
-const goToPokemonSkill = (skillName: string) => {
+const goToPokemonSkill = (skillName: string, url: string) => {
+  if (abilityDescriptionFlag.value === true) {
+    abilityDescriptionFlag.value = false
+  } else {
+    abilityCurrentlyDisplayed.value.name = skillName
+    abilityCurrentlyDisplayed.value.url = url
+    abilityDescriptionFlag.value = true
+  }
   console.log(skillName)
 }
 </script>
