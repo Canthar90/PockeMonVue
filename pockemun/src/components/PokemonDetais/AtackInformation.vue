@@ -4,10 +4,10 @@
       <div class="flex justify-center justify-items-center text-3xl w-full h-full">
         {{ prop.attackName }}:
       </div>
-      <div class="flex justify-center justify-items-center text-sm pt-4">
+      <div class="flex justify-center justify-items-center text-sm pt-4 px-4">
         {{ abilityDetails.effect_entries.find((elem) => elem.language.name === 'en')?.effect }}
       </div>
-      <div class="flex justify-center justify-items-center text-sm pt-4">
+      <div class="flex justify-center justify-items-center text-sm pt-4 px-4">
         {{
           abilityDetails.flavor_text_entries.find((elem) => elem.language.name === 'en')
             ?.flavor_text
