@@ -28,7 +28,7 @@
         <div class="flex justify-center justify-items-center mt-4">
           <div class="grid grid-cols-8 p-2 justify-items-center gap-8">
             <div
-              v-for="pokemon in allPokemons"
+              v-for="pokemon in displayedContent"
               :key="pokemon.name"
               role="button"
               @click="goToPokemonDetails(pokemon.name)"
@@ -45,8 +45,8 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios'
-import { onBeforeMount, ref } from 'vue'
+import axios, { all } from 'axios'
+import { onBeforeMount, ref, computed } from 'vue'
 
 import { useRouter } from 'vue-router'
 
@@ -63,10 +63,29 @@ const goToPokemonDetails = (pokemonName: string) => {
 
 const allPokemons = ref<PokemonData[]>([])
 
+const numberOfPage = ref<number>(0)
+
+const multiplayer = ref(1)
+
+const displayedContent = ref<PokemonData[]>([])
+
 onBeforeMount(async () => {
   const url = 'https://pokeapi.co/api/v2/pokemon?limit=2000'
 
   const response = await axios.get(url)
   allPokemons.value = response.data.results
+
+  if (numberOfPage.value > 0) {
+    setMultiplayer()
+  }
+  const itemsPageLimit = 80
+  const sliceUpperLimit = itemsPageLimit * multiplayer.value
+  const sliceLowerLimit = sliceUpperLimit - itemsPageLimit
+
+  displayedContent.value = allPokemons.value.slice(sliceLowerLimit, sliceUpperLimit)
 })
+
+function setMultiplayer() {
+  multiplayer.value = multiplayer.value + numberOfPage.value
+}
 </script>
