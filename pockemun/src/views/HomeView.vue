@@ -47,6 +47,8 @@
           v-for="page in nextPagesList"
           :key="page"
           class="flex justify-center justify-items-center p-4 bg-red-500 rounded-lg"
+          role="button"
+          @click="changePage(page)"
         >
           {{ page }}
         </div>
@@ -59,6 +61,8 @@
         <div
           v-if="numberOfPage < lastPage - 3"
           class="flex justify-center justify-items-center p-4 bg-red-500 rounded-lg"
+          role="button"
+          @click="changePage(lastPage)"
         >
           {{ lastPage }}
         </div>
@@ -86,7 +90,7 @@ const goToPokemonDetails = (pokemonName: string) => {
 
 const allPokemons = ref<PokemonData[]>([])
 
-const numberOfPage = ref<number>(6)
+const numberOfPage = ref<number>(1)
 
 const multiplayer = ref(1)
 const itemsPageLimit = 80
@@ -95,6 +99,12 @@ const lastPage = ref<number>(999)
 
 const displayedContent = ref<PokemonData[]>([])
 
+const changePage = (pageNr: number) => {
+  numberOfPage.value = pageNr
+
+  displayRestrictedNumberOfPokemon()
+}
+
 const nextPagesList = computed(() => {
   let listOfPages: number[] = []
 
@@ -102,7 +112,6 @@ const nextPagesList = computed(() => {
 
   if (sublistOfPagesBelow.length > 0) {
     listOfPages = listOfPages.concat(sublistOfPagesBelow)
-    console.log('Adding')
   }
 
   const sublistOfPagesAbowe: number[] = pagesAbove(numberOfPage.value, lastPage.value)
@@ -111,9 +120,8 @@ const nextPagesList = computed(() => {
 
   if (sublistOfPagesAbowe.length > 0) {
     listOfPages = listOfPages.concat(sublistOfPagesAbowe)
-    console.log('Adding')
   }
-  console.log(listOfPages)
+
   return listOfPages
 })
 
@@ -150,19 +158,23 @@ onBeforeMount(async () => {
   const response = await axios.get(url)
   allPokemons.value = response.data.results
 
-  if (numberOfPage.value > 0) {
+  displayRestrictedNumberOfPokemon()
+})
+
+function displayRestrictedNumberOfPokemon() {
+  if (numberOfPage.value > 1) {
     setMultiplayer()
   }
 
   const sliceUpperLimit = itemsPageLimit * multiplayer.value
   const sliceLowerLimit = sliceUpperLimit - itemsPageLimit
 
-  lastPage.value = Math.ceil(allPokemons.value.length / itemsPageLimit)
+  lastPage.value = Math.floor(allPokemons.value.length / itemsPageLimit)
 
   displayedContent.value = allPokemons.value.slice(sliceLowerLimit, sliceUpperLimit)
-})
+}
 
 function setMultiplayer() {
-  multiplayer.value = multiplayer.value + numberOfPage.value
+  multiplayer.value = numberOfPage.value
 }
 </script>
