@@ -41,11 +41,34 @@
         </div>
       </div>
     </div>
+    <div class="flex justify-center justify-items-center pt-4 pb-4">
+      <div v-if="lastPage" class="grid gap-2 grid-flow-col-dense">
+        <div
+          v-for="page in nextPagesList"
+          :key="page"
+          class="flex justify-center justify-items-center p-4 bg-red-500 rounded-lg"
+        >
+          {{ page }}
+        </div>
+        <div
+          v-if="numberOfPage < lastPage - 3"
+          class="flex justify-center justify-items-center p-4 bg-red-500 text-2xl rounded-lg"
+        >
+          ...
+        </div>
+        <div
+          v-if="numberOfPage < lastPage - 3"
+          class="flex justify-center justify-items-center p-4 bg-red-500 rounded-lg"
+        >
+          {{ lastPage }}
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import axios, { all } from 'axios'
+import axios from 'axios'
 import { onBeforeMount, ref, computed } from 'vue'
 
 import { useRouter } from 'vue-router'
@@ -63,11 +86,63 @@ const goToPokemonDetails = (pokemonName: string) => {
 
 const allPokemons = ref<PokemonData[]>([])
 
-const numberOfPage = ref<number>(0)
+const numberOfPage = ref<number>(6)
 
 const multiplayer = ref(1)
+const itemsPageLimit = 80
+
+const lastPage = ref<number>(999)
 
 const displayedContent = ref<PokemonData[]>([])
+
+const nextPagesList = computed(() => {
+  let listOfPages: number[] = []
+
+  const sublistOfPagesBelow: number[] = pagesBelow(numberOfPage.value)
+
+  if (sublistOfPagesBelow.length > 0) {
+    listOfPages = listOfPages.concat(sublistOfPagesBelow)
+    console.log('Adding')
+  }
+
+  const sublistOfPagesAbowe: number[] = pagesAbove(numberOfPage.value, lastPage.value)
+
+  console.log(sublistOfPagesAbowe)
+
+  if (sublistOfPagesAbowe.length > 0) {
+    listOfPages = listOfPages.concat(sublistOfPagesAbowe)
+    console.log('Adding')
+  }
+  console.log(listOfPages)
+  return listOfPages
+})
+
+function pagesBelow(currentPageNr: number) {
+  if (currentPageNr === 1) return []
+
+  if (currentPageNr === 2) return [1]
+
+  if (currentPageNr === 3) return [1, 2]
+
+  const start = currentPageNr - 3
+  const stop = currentPageNr
+  const numbersBelowList: number[] = Array.from({ length: stop - start }, (x, i) => i + start)
+  return numbersBelowList
+}
+
+function pagesAbove(currentPageNr: number, lastPage: number) {
+  if (currentPageNr === lastPage) return []
+
+  if (currentPageNr === lastPage - 1) return [lastPage]
+
+  if (currentPageNr === lastPage - 2) return [lastPage - 1, lastPage]
+
+  const start = currentPageNr + 1
+  const stop = currentPageNr + 4
+  const numbersAboweList: number[] = Array.from({ length: stop - start }, (x, i) => i + start)
+  console.log(numbersAboweList)
+  return numbersAboweList
+}
 
 onBeforeMount(async () => {
   const url = 'https://pokeapi.co/api/v2/pokemon?limit=2000'
@@ -78,9 +153,11 @@ onBeforeMount(async () => {
   if (numberOfPage.value > 0) {
     setMultiplayer()
   }
-  const itemsPageLimit = 80
+
   const sliceUpperLimit = itemsPageLimit * multiplayer.value
   const sliceLowerLimit = sliceUpperLimit - itemsPageLimit
+
+  lastPage.value = Math.ceil(allPokemons.value.length / itemsPageLimit)
 
   displayedContent.value = allPokemons.value.slice(sliceLowerLimit, sliceUpperLimit)
 })
