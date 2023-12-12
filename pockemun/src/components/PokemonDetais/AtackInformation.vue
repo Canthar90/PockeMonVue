@@ -5,13 +5,10 @@
         {{ prop.attackName }}:
       </div>
       <div class="flex justify-center justify-items-center text-sm pt-4 px-4">
-        {{ abilityDetails.effect_entries.find((elem) => elem.language.name === 'en')?.effect }}
+        {{ abilityEfectEntries }}
       </div>
       <div class="flex justify-center justify-items-center text-sm pt-4 px-4">
-        {{
-          abilityDetails.flavor_text_entries.find((elem) => elem.language.name === 'en')
-            ?.flavor_text
-        }}
+        {{ abilityFlavorTextEntries }}
       </div>
     </div>
   </div>
@@ -33,8 +30,22 @@ const prop = defineProps({
 
 const abilityDetails = ref<AbilityDetails>()
 
+const abilityEfectEntries = ref<string>()
+
+const abilityFlavorTextEntries = ref<string>()
+
 onBeforeMount(async () => {
   const response = await axios.get(prop.attackUrl)
   abilityDetails.value = response.data
+
+  if (abilityDetails.value) {
+    abilityEfectEntries.value = abilityDetails.value.effect_entries.find(
+      (elem) => elem.language.name === 'en'
+    )?.effect
+
+    abilityFlavorTextEntries.value = abilityDetails.value.flavor_text_entries.find(
+      (elem) => elem.language.name === 'en'
+    )?.flavor_text
+  }
 })
 </script>
