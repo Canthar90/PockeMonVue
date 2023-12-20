@@ -1,9 +1,5 @@
-<script setup lang="ts">
-import { RouterView } from 'vue-router'
-</script>
-
 <template>
-  <div class="fixed pl-4 pt-4">
+  <div class="fixed z-50 pl-4 pt-4">
     <router-link to="/">
       <img
         class="w3/4 hover:animate-ping"
@@ -16,3 +12,7 @@ import { RouterView } from 'vue-router'
 
   <RouterView class="h-full w-full" />
 </template>
+
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
+</script>
