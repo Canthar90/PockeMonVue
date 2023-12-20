@@ -3,43 +3,50 @@
     <div class="grid grid-cols-10 mt-10 mb-10">
       <div
         v-if="fetched && choosenPokemon"
-        class="p-10 col-span-4 col-start-4 bg-red-300 rounded-3xl"
+        class="p-10 col-span-4 col-start-4 bg-red-300 rounded-3xl transition-all duration-200"
+        :class="{ 'scale-105': abilityDescriptionFlag }"
       >
-        <div class="flex justify-center justify-items-center">
-          <img
-            :src="choosenPokemon.sprites.other['official-artwork'].front_default"
-            alt="Pokemon image"
-            class="bg-slate-200 rounded-full"
-            role="button"
-            @click="statisticPopupActions"
-          />
-        </div>
-        <div v-if="statisticPopup">
-          <type-evolutions-segment
-            :types="choosenPokemon.types"
-            :stats="choosenPokemon.stats"
-            :weigth="choosenPokemon.weight"
-          ></type-evolutions-segment>
-        </div>
-        <div class="text-6xl flex justify-center pt-2 text-slate-950">
-          {{ choosenPokemon.name }}
-        </div>
-        <div class="text-3xl flex justify-start pt-4 text-slate-950 ml-10">Moves:</div>
-        <div class="grid grid-cols-3 gap-4 text-3xl pl-8">
-          <div
-            v-for="move in choosenPokemon.abilities"
-            :key="move.ability.name"
-            class="bg-red-500 rounded-2xl flex justify-center text-slate-950 p-2"
-            role="button"
-            @click="goToPokemonSkill(move.ability.name, move.ability.url)"
-          >
-            {{ move.ability.name }}
+        <div :class="{ 'scale-95': abilityDescriptionFlag }">
+          <div class="flex justify-center justify-items-center">
+            <img
+              :src="choosenPokemon.sprites.other['official-artwork'].front_default"
+              alt="Pokemon image"
+              class="bg-slate-200 rounded-full"
+              role="button"
+              @click="statisticPopupActions"
+            />
           </div>
-          <div v-if="abilityDescriptionFlag" class="col-span-3 p-2">
-            <atack-information
-              :attack-name="abilityCurrentlyDisplayed.name"
-              :attack-url="abilityCurrentlyDisplayed.url"
-            ></atack-information>
+          <transition-group name="content" tag="div">
+            <div v-if="statisticPopup">
+              <type-evolutions-segment
+                :types="choosenPokemon.types"
+                :stats="choosenPokemon.stats"
+                :weigth="choosenPokemon.weight"
+              ></type-evolutions-segment>
+            </div>
+          </transition-group>
+          <div class="text-6xl flex justify-center pt-2 text-slate-950">
+            {{ choosenPokemon.name }}
+          </div>
+          <div class="text-3xl flex justify-start pt-4 text-slate-950 ml-10">Moves:</div>
+          <div class="grid grid-cols-3 gap-4 text-3xl pl-8">
+            <div
+              v-for="move in choosenPokemon.abilities"
+              :key="move.ability.name"
+              class="bg-red-500 rounded-2xl flex justify-center text-slate-950 p-2"
+              role="button"
+              @click="goToPokemonSkill(move.ability.name, move.ability.url)"
+            >
+              {{ move.ability.name }}
+            </div>
+            <transition-group>
+              <div v-if="abilityDescriptionFlag" class="col-span-3 p-2 transition-all duration-150">
+                <atack-information
+                  :attack-name="abilityCurrentlyDisplayed.name"
+                  :attack-url="abilityCurrentlyDisplayed.url"
+                ></atack-information>
+              </div>
+            </transition-group>
           </div>
         </div>
       </div>
@@ -141,3 +148,15 @@ const goToPokemonSkill = (skillName: string, url: string) => {
   console.log(skillName)
 }
 </script>
+
+<style>
+.content-enter-active,
+.content-leave-active {
+  transition: all 0.5s;
+}
+.content-enter-from,
+.content-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+</style>
