@@ -6,56 +6,64 @@
       background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/0906b988-7e73-42cc-9161-23f7d070a0e0/denz7q5-4f9de708-5595-44e8-9f4e-98de7c6fb70d.jpg/v1/fill/w_1119,h_714,q_70,strp/eevee_and_friends_by_mcgmark_denz7q5-pre.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODAwIiwicGF0aCI6IlwvZlwvMDkwNmI5ODgtN2U3My00MmNjLTkxNjEtMjNmN2QwNzBhMGUwXC9kZW56N3E1LTRmOWRlNzA4LTU1OTUtNDRlOC05ZjRlLTk4ZGU3YzZmYjcwZC5qcGciLCJ3aWR0aCI6Ijw9MTI1NCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.vSotdBuEHXKKlyxSbHtHu65ButZbGBOviGsdmjAqokk');
     "
   >
-    <div class="grid grid-cols-10">
-      <div class="col-start-3 col-span-6">
-        <div class="p-2 bg-red-500 rounded-xl mt-4">
-          <p class="text-orange-100 text-lg text-center mx-10">
-            Welcome to our Pokémon Hub! Explore our extensive list of Pokémon, featuring all your
-            favorite characters from the world of Pokémon. Discover detailed information, stats, and
-            abilities for each Pokémon, and embark on an exciting journey through generations of
-            captivating creatures. Start your Pokémon adventure now!
-          </p>
-        </div>
-        <div class="flex justify-center justify-items-center mt-4">
-          <div class="grid grid-cols-8 p-2 justify-items-center gap-8">
-            <button
-              v-for="pokemon in displayedContent"
-              :key="pokemon.name"
-              role="button"
-              @click="goToPokemonDetails(pokemon.name)"
-            >
-              <div class="p-2 bg-red-500 rounded-xl">
-                <h1 class="flex flex-auto text-md text-orange-100 p-2">{{ pokemon.name }}</h1>
-              </div>
-            </button>
+    <div
+      class="transition-all ease-in duration-500"
+      :class="{
+        'opacity-0 translate-y-full': transitionFlag === false,
+        'opacity-1 translate-y-0': transitionFlag === true
+      }"
+    >
+      <div class="grid grid-cols-10">
+        <div class="col-start-3 col-span-6">
+          <div class="p-2 bg-red-500 rounded-xl mt-4">
+            <p class="text-orange-100 text-lg text-center mx-10">
+              Welcome to our Pokémon Hub! Explore our extensive list of Pokémon, featuring all your
+              favorite characters from the world of Pokémon. Discover detailed information, stats,
+              and abilities for each Pokémon, and embark on an exciting journey through generations
+              of captivating creatures. Start your Pokémon adventure now!
+            </p>
+          </div>
+          <div class="flex justify-center justify-items-center mt-4">
+            <div class="grid grid-cols-8 p-2 justify-items-center gap-8">
+              <button
+                v-for="pokemon in displayedContent"
+                :key="pokemon.name"
+                role="button"
+                @click="goToPokemonDetails(pokemon.name)"
+              >
+                <div class="p-2 bg-red-500 rounded-xl">
+                  <h1 class="flex flex-auto text-md text-orange-100 p-2">{{ pokemon.name }}</h1>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="flex justify-center justify-items-center pt-4 pb-4">
-      <div v-if="lastPage" class="grid gap-2 grid-flow-col-dense">
-        <div
-          v-for="page in nextPagesList"
-          :key="page"
-          class="flex justify-center justify-items-center p-4 bg-red-500 rounded-lg"
-          role="button"
-          @click="changePage(page)"
-        >
-          {{ page }}
-        </div>
-        <div
-          v-if="numberOfPage < lastPage - 3"
-          class="flex justify-center justify-items-center p-4 bg-red-500 text-2xl rounded-lg"
-        >
-          ...
-        </div>
-        <div
-          v-if="numberOfPage < lastPage - 3"
-          class="flex justify-center justify-items-center p-4 bg-red-500 rounded-lg"
-          role="button"
-          @click="changePage(lastPage)"
-        >
-          {{ lastPage }}
+      <div class="flex justify-center justify-items-center pt-4 pb-4">
+        <div v-if="lastPage" class="grid gap-2 grid-flow-col-dense">
+          <div
+            v-for="page in nextPagesList"
+            :key="page"
+            class="flex justify-center justify-items-center p-4 bg-red-500 rounded-lg"
+            role="button"
+            @click="changePage(page)"
+          >
+            {{ page }}
+          </div>
+          <div
+            v-if="numberOfPage < lastPage - 3"
+            class="flex justify-center justify-items-center p-4 bg-red-500 text-2xl rounded-lg"
+          >
+            ...
+          </div>
+          <div
+            v-if="numberOfPage < lastPage - 3"
+            class="flex justify-center justify-items-center p-4 bg-red-500 rounded-lg"
+            role="button"
+            @click="changePage(lastPage)"
+          >
+            {{ lastPage }}
+          </div>
         </div>
       </div>
     </div>
@@ -64,7 +72,7 @@
 
 <script setup lang="ts">
 import axios from 'axios'
-import { onBeforeMount, ref, computed } from 'vue'
+import { onBeforeMount, ref, computed, onMounted } from 'vue'
 import HomeHero from '@/components/MainAssets/HomeHero.vue'
 
 import { useRouter } from 'vue-router'
@@ -90,6 +98,8 @@ const itemsPageLimit = 80
 const lastPage = ref<number>(999)
 
 const displayedContent = ref<PokemonData[]>([])
+
+const transitionFlag = ref(false)
 
 const changePage = (pageNr: number) => {
   numberOfPage.value = pageNr
@@ -151,6 +161,10 @@ onBeforeMount(async () => {
   allPokemons.value = response.data.results
 
   displayRestrictedNumberOfPokemon()
+})
+
+onMounted(() => {
+  setTimeout(() => (transitionFlag.value = true), 700)
 })
 
 function displayRestrictedNumberOfPokemon() {
